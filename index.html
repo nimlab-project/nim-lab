@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NIM LAB — 勝ち筋を、目で理解する</title>
+  <style>
+    :root{--ink:#132c29;--muted:#66736f;--paper:#f3f1e9;--card:#fffdf8;--line:#d8d8cd;--mint:#a9dbc3;--green:#176650;--coral:#ef7357;--yellow:#f0c950}
+    *{box-sizing:border-box}html{background:var(--paper)}body{margin:0;color:var(--ink);background:linear-gradient(#132c2908 1px,transparent 1px),linear-gradient(90deg,#132c2908 1px,transparent 1px),var(--paper);background-size:30px 30px;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",system-ui,sans-serif}
+    button,input,select{font:inherit}button{color:inherit;cursor:pointer}.hidden{display:none!important}
+    header{height:84px;max-width:1320px;margin:auto;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:50%;background:var(--yellow);font-weight:900}.brand strong{display:block;letter-spacing:.13em}.brand small{color:var(--muted)}.rule{font:700 11px ui-monospace,monospace;color:var(--green)}.rule::before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:#3cb27e;box-shadow:0 0 0 4px #3cb27e22}
+    main{width:min(1220px,90vw);margin:auto}.eyebrow{margin:0 0 12px;color:var(--green);font:800 11px ui-monospace,monospace;letter-spacing:.15em}
+    .setup{min-height:calc(100vh - 150px);display:grid;grid-template-columns:.9fr 1.1fr;gap:8vw;align-items:center;padding:60px 0 80px}.intro h1,.game-title h1,.result h1{margin:0;font-size:clamp(42px,5vw,70px);line-height:1.08;letter-spacing:-.06em}.lead{margin:25px 0;color:var(--muted);line-height:1.9}.formula{display:flex;max-width:480px;border:1px solid var(--ink);border-radius:8px;overflow:hidden;background:var(--card);box-shadow:8px 8px 0 var(--mint)}.formula span{display:grid;place-items:center;padding:20px;color:#fff;background:var(--ink);font-size:12px;font-weight:800}.formula div{padding:17px 20px}.formula code{color:var(--coral);font-size:20px;font-weight:900}.formula p{margin:4px 0 0;color:var(--muted);font-size:11px}
+    .card{padding:30px;border:1px solid var(--line);border-radius:12px;background:#fffdf8f5;box-shadow:0 18px 60px #132c2912}.section-head{display:flex;align-items:center;gap:12px}.section-head>span{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;color:#fff;background:var(--ink);font:800 11px ui-monospace,monospace}.section-head h2,.section-head p{margin:0}.section-head h2{font-size:18px}.section-head p{margin-top:2px;color:var(--muted);font-size:10px}
+    .count-row{margin:22px 0 16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800}.stepper{display:flex;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:#fff}.stepper button,.stepper input{width:38px;height:36px;padding:0;border:0;background:transparent;text-align:center}.stepper input{width:54px;border-inline:1px solid var(--line);font-weight:900;-moz-appearance:textfield}.stepper input::-webkit-inner-spin-button{display:none}
+    .heap-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.heap-field{position:relative;padding:14px 8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;text-align:center}.heap-field>b{position:absolute;top:-7px;left:8px;width:20px;height:20px;display:grid;place-items:center;border-radius:4px;color:#fff;background:var(--coral);font-size:10px}.heap-field label{display:block;margin-bottom:8px;font-size:11px;font-weight:800}.heap-field .stepper{width:max-content;margin:auto}.heap-field small{display:block;margin-top:7px;color:var(--muted);font:10px ui-monospace,monospace}.divider{height:1px;margin:26px 0;background:var(--line)}
+    .turn-choice{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:19px 0 25px}.turn-choice button{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid var(--line);border-radius:7px;background:#fff;text-align:left}.turn-choice button.selected{border-color:var(--green);background:#eff8f2;box-shadow:inset 0 0 0 1px var(--green)}.turn-choice i{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--paper);font-style:normal;font-weight:900}.turn-choice .selected i{color:#fff;background:var(--green)}.turn-choice strong,.turn-choice small{display:block}.turn-choice strong{font-size:12px}.turn-choice small{margin-top:2px;color:var(--muted);font-size:9px}
+    .primary{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 19px;border:0;border-radius:7px;color:#fff;background:var(--ink);font-weight:800}.primary:hover{background:#234640}.primary span{color:var(--yellow);font-size:20px}
+    .game{padding:40px 0 75px}.game-title{display:flex;align-items:end;justify-content:space-between;margin-bottom:25px}.game-title h1{font-size:clamp(38px,5vw,60px)}.turnno{color:var(--coral);font:900 28px ui-monospace,monospace}.turnno small{color:var(--muted);font-size:10px}
+    .grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);gap:20px;align-items:start}.column{display:grid;gap:16px}.panel{padding:24px;border:1px solid var(--line);border-radius:11px;background:var(--card);box-shadow:0 14px 45px #132c290c}.panel-head{display:flex;align-items:end;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line)}.panel-head span{color:var(--green);font:800 9px ui-monospace,monospace;letter-spacing:.15em}.panel-head h2{margin:3px 0 0;font-size:18px}.panel-head small{color:var(--muted);font-size:10px}.board-tabs,.history-controls{display:flex;gap:7px}.board-tabs button,.history-controls button{padding:9px 13px;border:1px solid var(--line);border-radius:6px;background:var(--card);font-size:10px;font-weight:800}.board-tabs button.active{color:#fff;border-color:var(--ink);background:var(--ink)}.history-controls button:disabled{opacity:.35;cursor:default}.skip-action{padding:15px;border:1px solid var(--yellow);border-radius:9px;background:#fff9df}.skip-action p{margin:0 0 10px;color:var(--muted);font-size:10px;line-height:1.6}
+    .heap-board{display:grid;gap:10px;padding-top:18px}.heap-row{min-height:50px;display:grid;grid-template-columns:70px 1fr;align-items:center}.heap-label{display:flex;align-items:center;gap:9px}.heap-label b{width:29px;height:29px;display:grid;place-items:center;border-radius:5px;color:#fff;background:var(--ink)}.heap-label strong{font:800 19px ui-monospace,monospace}.coins{min-height:44px;display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:7px 10px;border-left:2px solid var(--line)}.coin{width:25px;height:25px;border:2px solid #d29f24;border-radius:50%;background:var(--yellow);box-shadow:inset 0 0 0 3px #f9dc7f,1px 2px 0 #132c2922}.heap-row:nth-child(even) .coin{border-color:#d9664d;background:#f28d73;box-shadow:inset 0 0 0 3px #f8b09e,1px 2px 0 #132c2922}.empty{opacity:.45}.empty .coins::after{content:"EMPTY";color:var(--muted);font:9px ui-monospace,monospace}
+    .binary{display:grid;margin-top:16px;overflow:auto;border:1px solid var(--line);border-radius:7px}.binary>*{min-height:34px;display:grid;place-items:center;border-top:1px solid var(--line);border-right:1px solid var(--line);font:12px ui-monospace,monospace}.binary .head{min-height:29px;border-top:0;color:var(--muted);background:var(--paper);font-size:9px}.binary .one{color:#fff;background:var(--green);box-shadow:inset 0 0 0 6px var(--card);font-weight:900}.binary .xor{color:var(--green);background:#edf5ef;font-weight:900}.binary .xor.one{color:#fff;background:var(--coral);box-shadow:inset 0 0 0 6px #edf5ef}
+    .nim{overflow:hidden;border-radius:11px;box-shadow:0 14px 40px #132c2922}.nim-top{display:flex;align-items:baseline;gap:14px;padding:21px 23px;color:#fff;background:var(--ink)}.nim-top span{margin-right:auto;font-size:11px}.nim-top strong{font:900 26px ui-monospace,monospace}.nim-top code{color:var(--yellow);font-weight:900}.verdict{padding:14px 20px;background:#f8cfc5;font-size:11px}.verdict.safe{background:#cce9d9}.verdict strong{display:block;font-size:13px}
+    .action h2{margin:7px 0 9px;font-size:22px}.action>p{margin:0 0 17px;color:var(--muted);font-size:11px;line-height:1.7}.kicker{color:var(--green);font:800 9px ui-monospace,monospace;letter-spacing:.15em}.recs{display:grid;gap:8px}.rec{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:11px;padding:12px;border:1px solid var(--mint);border-radius:7px;background:#f2f8f3;text-align:left}.rec:hover{border-color:var(--green);transform:translateX(2px)}.rec>span:first-child{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;color:#fff;background:var(--green);font:800 10px ui-monospace,monospace}.rec small,.rec strong,.rec code{display:block}.rec small{color:var(--muted);font-size:9px}.rec strong{font-size:14px}.rec code{color:var(--muted);font-size:10px}.tag{padding:5px 7px;border-radius:4px;color:var(--green);background:var(--mint);font:800 8px ui-monospace,monospace}
+    .manual{margin-top:14px;border-top:1px solid var(--line)}.manual summary{padding-top:12px;color:var(--muted);font-size:10px}.move-form{display:grid;gap:15px;margin-top:15px}.move-form label{display:block;margin-bottom:7px;font-size:11px;font-weight:800}.heap-buttons{display:flex;flex-wrap:wrap;gap:6px}.heap-buttons button{min-width:50px;padding:7px;border:1px solid var(--line);border-radius:6px;background:#fff;font-weight:900}.heap-buttons button.selected{color:#fff;background:var(--ink)}.heap-buttons button:disabled{opacity:.3}.heap-buttons small{display:block;font-size:8px;font-weight:400}.take-line{display:flex;align-items:center;justify-content:space-between}.preview{display:flex;justify-content:space-between;padding:10px 13px;border-radius:6px;background:var(--paper);font-size:11px}.preview code{color:var(--coral);font-size:15px;font-weight:900}.opponent{border-top:4px solid var(--coral)}
+    .last{padding:2px 6px;color:var(--muted);font-size:10px}.last code{color:var(--green);font-weight:900}
+    .review{padding:45px 0 80px}.result{display:flex;align-items:center;justify-content:space-between;padding:35px 40px;border-radius:13px;color:#fff;background:var(--ink);box-shadow:11px 11px 0 var(--mint)}.result h1{font-size:clamp(40px,5vw,64px)}.result p{margin:10px 0 0;color:#bcd0ca;font-size:12px}.seal{width:100px;height:100px;display:grid;place-items:center;border:2px solid var(--yellow);border-radius:50%;color:var(--yellow);font-size:22px;font-weight:900;transform:rotate(5deg)}
+    .review-head{display:flex;align-items:end;justify-content:space-between;margin:50px 0 20px}.review-head h2{margin:4px 0 0}.review-head button{padding:9px 14px;border:1px solid var(--ink);border-radius:5px;background:transparent;font-size:10px;font-weight:800}.review-grid{display:grid;grid-template-columns:minmax(290px,.7fr) minmax(0,1.3fr);gap:18px;align-items:start}.timeline{overflow:hidden;border:1px solid var(--line);border-radius:9px;background:var(--card)}.timeline button{position:relative;width:100%;display:grid;grid-template-columns:36px 1fr 60px;align-items:center;gap:10px;padding:13px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left}.timeline button:first-child{border-top:0}.timeline button.active{background:#eef7f0;box-shadow:inset 4px 0 var(--green)}.timeline button>span{color:var(--coral);font:900 12px ui-monospace,monospace}.timeline strong,.timeline small{display:block}.timeline strong{font-size:11px}.timeline small{color:var(--muted);font-size:9px}.timeline code{font-size:10px;font-weight:900}
+    .detail h3{margin:6px 0 18px}.before-after{display:grid;grid-template-columns:1fr 25px 1fr;align-items:center;padding:13px;border-radius:6px;background:var(--paper);text-align:center}.before-after small,.before-after strong{display:block}.before-after small{color:var(--muted);font:8px ui-monospace,monospace}.before-after strong{margin-top:3px;font:800 16px ui-monospace,monospace}.before-after i{color:var(--coral);font-style:normal}.note{display:flex;gap:10px;margin-top:16px;padding:13px;border-left:3px solid var(--coral);background:#fff2ee}.note.good{border-color:var(--green);background:#eef7f0}.note strong{font-size:11px}.note p{margin:3px 0 0;color:var(--muted);font-size:10px}.review-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px}.review-nav button{padding:7px 10px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:10px}.review-nav button:disabled{opacity:.3}
+    footer{max-width:1220px;margin:auto;padding:25px 0 35px;display:flex;justify-content:space-between;color:var(--muted);border-top:1px solid var(--line);font-size:10px}footer strong{color:var(--ink);letter-spacing:.12em}
+    @media(max-width:900px){.setup,.grid,.review-grid{grid-template-columns:1fr}.setup{gap:45px}.grid .side{grid-row:1}.detail{grid-row:1}}
+    @media(max-width:600px){header{height:72px}.brand small,.rule{display:none}main{width:92vw}.setup{padding:40px 0 60px}.intro h1{font-size:41px}.heap-fields{grid-template-columns:repeat(2,1fr)}.turn-choice{grid-template-columns:1fr}.game-title{align-items:start}.panel{padding:18px}.panel-head small{display:none}.coins{gap:4px}.coin{width:20px;height:20px}.rec{grid-template-columns:28px 1fr}.tag{grid-column:2;justify-self:start}.result{padding:27px 22px}.seal{width:75px;height:75px;font-size:16px}.review-head h2{font-size:18px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark">N</span><span><strong>NIM LAB</strong><small>勝ち筋を、目で理解する。</small></span></div>
+    <div class="rule">NORMAL PLAY　最後の1枚を取った人が勝ち</div>
+  </header>
+  <main>
+    <section id="setup" class="setup">
+      <div class="intro">
+        <p class="eyebrow">INTERACTIVE NIM STRATEGY</p>
+        <h1>勝ち方を覚える、<br>ニムの実験室。</h1>
+        <p class="lead">山をつくって対局を始めましょう。すべての手を二進数に分解し、「ニム和を0にする」感覚を一手ずつ身につけられます。</p>
+        <div class="formula"><span>勝ちの基本公式</span><div><code>A ⊕ B ⊕ C = 0</code><p>自分の手のあと、相手にこの状態を渡す。</p></div></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><span>01</span><div><h2>盤面をつくる</h2><p>2〜8個の山、各1〜255枚</p></div></div>
+        <div class="count-row"><span>山の数</span><div class="stepper"><button id="countMinus">−</button><input id="heapCount" type="number" min="2" max="8" value="3"><button id="countPlus">＋</button></div></div>
+        <div id="heapFields" class="heap-fields"></div>
+        <div class="divider"></div>
+        <div class="section-head"><span>02</span><div><h2>手番を選ぶ</h2><p>実際の対局に合わせて選択</p></div></div>
+        <div class="turn-choice"><button id="firstMe" class="selected"><i>先</i><span><strong>私が先手</strong><small>最初の一手を提案します</small></span></button><button id="firstOpponent"><i>後</i><span><strong>私が後手</strong><small>相手の一手を入力します</small></span></button></div>
+        <button id="start" class="primary">この盤面で始める <span>→</span></button>
+      </div>
+    </section>
+
+    <section id="game" class="game hidden">
+      <div class="game-title"><div><p class="eyebrow">GAME IN PROGRESS</p><h1 id="turnTitle">私の番</h1></div><div><div class="turnno"><small>TURN </small><span id="turnNumber">01</span></div><div class="history-controls"><button id="undoGame">← 戻る</button><button id="redoGame">進む →</button></div></div></div>
+      <div class="grid">
+        <div class="column">
+          <div class="board-tabs" role="tablist" aria-label="盤面表示"><button id="showCoins" class="active" role="tab" aria-selected="true">現在の盤面</button><button id="showBinary" role="tab" aria-selected="false">現在の盤面（二進数）</button></div>
+          <div id="boardPanel" class="panel"><div class="panel-head"><div><span>BOARD</span><h2>現在の盤面</h2></div><small>コインを取る山は1つだけ</small></div><div id="heapBoard" class="heap-board"></div></div>
+          <div id="binaryPanel" class="panel hidden"><div class="panel-head"><div><span>BINARY VIEW</span><h2>現在の盤面（二進数）</h2></div><small>同じ列の1が偶数なら XOR は0</small></div><div id="binaryBoard" class="binary"></div></div>
+        </div>
+        <aside class="column side">
+          <div class="nim"><div class="nim-top"><span>現在のニム和</span><strong id="nimBinary"></strong><code id="nimDecimal"></code></div><div id="verdict" class="verdict"></div></div>
+          <div id="action" class="panel action"></div>
+          <div id="skipAction" class="skip-action hidden"><p>同じ枚数の山がそれぞれ偶数個あります。対称性を保つ手順として以降を省略できます。</p><button id="skipRemaining" class="primary">以下の操作は省略する <span>→</span></button></div>
+          <div id="lastMove" class="last hidden"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="review" class="review hidden">
+      <div class="result"><div><p class="eyebrow">GAME COMPLETE</p><h1 id="resultTitle"></h1><p id="resultCopy"></p></div><div id="seal" class="seal"></div></div>
+      <div class="review-head"><div><p class="eyebrow">POST-GAME ANALYSIS</p><h2>一手ずつ、勝負の流れを振り返る</h2></div><div class="history-controls"><button id="undoReview">← 戻る</button><button id="redoReview">進む →</button><button id="newGame">新しい対局 ＋</button></div></div>
+      <div class="review-grid"><div id="timeline" class="timeline"></div><div id="detail" class="panel detail"></div></div>
+    </section>
+  </main>
+  <footer><strong>NIM LAB</strong><span>ネット接続なしで使えるローカル版</span></footer>
+
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const name = i => String.fromCharCode(65 + i);
+      const xor = values => values.reduce((a, b) => a ^ b, 0);
+      const width = values => Math.max(3, Math.max(0, ...values).toString(2).length);
+      const bin = (n, w) => n.toString(2).padStart(w, "0");
+      const who = p => p === "me" ? "私" : "相手";
+      let setupHeaps = [3, 4, 5], first = "me", heaps = [], turn = "me", history = [], redoHistory = [], selectedHeap = 0, take = 1, reviewIndex = 0, boardView = "coins";
+
+      function winningMoves(values) {
+        const n = xor(values);
+        if (!n) return [];
+        return values.flatMap((value, i) => {
+          const next = value ^ n;
+          return next < value ? [{ heap: i, take: value - next, remain: next }] : [];
+        });
+      }
+      function show(id) { ["setup","game","review"].forEach(x => $(x).classList.toggle("hidden", x !== id)); }
+      const other = p => p === "me" ? "opponent" : "me";
+      function setBoardView(view) {
+        boardView = view;
+        const binary = view === "binary";
+        $("boardPanel").classList.toggle("hidden", binary);
+        $("binaryPanel").classList.toggle("hidden", !binary);
+        $("showCoins").classList.toggle("active", !binary);
+        $("showBinary").classList.toggle("active", binary);
+        $("showCoins").setAttribute("aria-selected", String(!binary));
+        $("showBinary").setAttribute("aria-selected", String(binary));
+      }
+      function updateHistoryControls() {
+        ["undoGame","undoReview"].forEach(id => $(id).disabled = history.length === 0);
+        ["redoGame","redoReview"].forEach(id => $(id).disabled = redoHistory.length === 0);
+      }
+      function isPairedPosition(values) {
+        const counts = new Map();
+        values.filter(v => v > 0).forEach(v => counts.set(v, (counts.get(v) || 0) + 1));
+        return counts.size > 0 && [...counts.values()].every(count => count % 2 === 0);
+      }
+      $("showCoins").onclick = () => setBoardView("coins");
+      $("showBinary").onclick = () => setBoardView("binary");
+      function renderSetup() {
+        $("heapCount").value = setupHeaps.length;
+        const w = width(setupHeaps);
+        $("heapFields").innerHTML = setupHeaps.map((v,i) => `<div class="heap-field"><b>${name(i)}</b><label>山 ${name(i)}</label><div class="stepper"><button data-dec="${i}">−</button><input data-heap="${i}" type="number" min="1" max="255" value="${v}"><button data-inc="${i}">＋</button></div><small>${bin(v,w)}₂</small></div>`).join("");
+        document.querySelectorAll("[data-dec]").forEach(b => b.onclick = () => changeSetup(+b.dataset.dec, -1));
+        document.querySelectorAll("[data-inc]").forEach(b => b.onclick = () => changeSetup(+b.dataset.inc, 1));
+        document.querySelectorAll("[data-heap]").forEach(input => input.onchange = () => {
+          const i = +input.dataset.heap;
+          setupHeaps[i] = Math.max(1, Math.min(255, +input.value || 1));
+          input.value = setupHeaps[i];
+          const w = width(setupHeaps);
+          document.querySelectorAll(".heap-field small").forEach((small, j) => {
+            small.textContent = `${bin(setupHeaps[j], w)}₂`;
+          });
+        });
+      }
+      function changeSetup(i, delta) { setupHeaps[i] = Math.max(1, Math.min(255, setupHeaps[i] + delta)); renderSetup(); }
+      function setHeapCount(n) {
+        if (!Number.isFinite(n)) n = setupHeaps.length;
+        n = Math.max(2, Math.min(8, Math.round(n)));
+        while (setupHeaps.length < n) setupHeaps.push(Math.min(255, setupHeaps.length + 3));
+        while (setupHeaps.length > n) setupHeaps.pop();
+        renderSetup();
+      }
+      $("countMinus").onclick = () => setHeapCount(setupHeaps.length - 1);
+      $("countPlus").onclick = () => setHeapCount(setupHeaps.length + 1);
+      $("heapCount").onchange = e => setHeapCount(+e.target.value);
+      $("firstMe").onclick = () => { first = "me"; $("firstMe").classList.add("selected"); $("firstOpponent").classList.remove("selected"); };
+      $("firstOpponent").onclick = () => { first = "opponent"; $("firstOpponent").classList.add("selected"); $("firstMe").classList.remove("selected"); };
+      $("start").onclick = () => { heaps = [...setupHeaps]; turn = first; history = []; redoHistory = []; selectedHeap = 0; take = 1; boardView = "coins"; show("game"); setBoardView("coins"); renderGame(); };
+
+      function binaryHTML(values, nimValue) {
+        const w = width(values), cols = `78px repeat(${w},minmax(32px,1fr)) 55px`;
+        let html = `<div class="head">山</div>${[...Array(w)].map((_,i)=>`<div class="head">2<sup>${w-i-1}</sup></div>`).join("")}<div class="head">10進</div>`;
+        values.forEach((v,i) => { html += `<strong>${name(i)}</strong>${[...bin(v,w)].map(b=>`<span class="${b==="1"?"one":""}">${b}</span>`).join("")}<em>${v}</em>`; });
+        html += `<strong class="xor">XOR</strong>${[...bin(nimValue,w)].map(b=>`<span class="xor ${b==="1"?"one":""}">${b}</span>`).join("")}<em class="xor">${nimValue}</em>`;
+        return { html, cols };
+      }
+      function renderGame() {
+        const n = xor(heaps), w = width(heaps), moves = winningMoves(heaps);
+        $("turnTitle").textContent = turn === "me" ? "私の番" : "相手の番";
+        $("turnNumber").textContent = String(history.length + 1).padStart(2,"0");
+        $("heapBoard").innerHTML = heaps.map((v,i)=>`<div class="heap-row ${v===0?"empty":""}"><div class="heap-label"><b>${name(i)}</b><strong>${v}</strong></div><div class="coins">${[...Array(v)].map(()=>'<i class="coin"></i>').join("")}</div></div>`).join("");
+        const table = binaryHTML(heaps,n); $("binaryBoard").innerHTML = table.html; $("binaryBoard").style.gridTemplateColumns = table.cols;
+        $("nimBinary").textContent = bin(n,w) + "₂"; $("nimDecimal").textContent = "= " + n;
+        $("verdict").className = "verdict" + (n===0?" safe":"");
+        $("verdict").innerHTML = n===0 ? "<strong>○ バランス状態</strong>この状態から0を保つ手はありません" : "<strong>！ 勝ち筋あり</strong>ニム和を0にできる手があります";
+        const canSkip = isPairedPosition(heaps);
+        $("skipAction").classList.toggle("hidden", !canSkip);
+        setBoardView(boardView);
+        updateHistoryControls();
+        if (turn === "me") {
+          $("action").className = "panel action";
+          $("action").innerHTML = `<div class="kicker">MY MOVE</div><h2>${moves.length?"この手で、0を渡せます。":"今は相手が有利な盤面です。"}</h2><p>${moves.length?`必勝法となる手は${moves.length}通り。どれを選んでもニム和は0です。`:"どの手でもニム和は0から変わります。相手のミスを待ちながら、まず1枚取るのがシンプルです。"}</p><div class="recs">${moves.map((m,i)=>`<button class="rec" data-rec="${m.heap},${m.take}"><span>${i+1}</span><div><small>山 ${name(m.heap)} から</small><strong>${m.take}枚 取る</strong><code>${heaps[m.heap]} → ${m.remain}</code></div><span class="tag">XOR → 0</span></button>`).join("")}</div>${moves.length?"":'<button id="fallback" class="primary">最初の山から1枚取る <span>→</span></button>'}<details class="manual"><summary>別の手を試す</summary><div id="manualForm"></div></details>`;
+          document.querySelectorAll("[data-rec]").forEach(b => b.onclick = () => { const [h,t] = b.dataset.rec.split(",").map(Number); makeMove(h,t); });
+          if (!moves.length) $("fallback").onclick = () => makeMove(heaps.findIndex(v=>v>0),1);
+          renderMoveForm($("manualForm"),"この手を指す");
+        } else {
+          $("action").className = "panel action opponent";
+          $("action").innerHTML = '<div class="kicker">OPPONENT’S MOVE</div><h2>相手の手を入力</h2><p>実際に相手が選んだ山と、取った枚数を入力してください。</p><div id="opponentForm"></div>';
+          renderMoveForm($("opponentForm"),"相手の手を確定");
+        }
+        if (history.length) {
+          const m = history.at(-1); $("lastMove").classList.remove("hidden");
+          $("lastMove").innerHTML = `PREVIOUS MOVE　<strong>${who(m.actor)}</strong>が 山${name(m.heap)}から <strong>${m.take}枚</strong>　<code>XOR ${m.nimBefore} → ${m.nimAfter}</code>`;
+        } else $("lastMove").classList.add("hidden");
+      }
+      function renderMoveForm(target,label) {
+        if (!heaps[selectedHeap]) selectedHeap = heaps.findIndex(v=>v>0);
+        take = Math.min(Math.max(1,take),heaps[selectedHeap]);
+        target.innerHTML = `<div class="move-form"><div><label>取る山</label><div class="heap-buttons">${heaps.map((v,i)=>`<button data-pick="${i}" class="${i===selectedHeap?"selected":""}" ${v===0?"disabled":""}>${name(i)}<small>${v}枚</small></button>`).join("")}</div></div><div class="take-line"><label>取る枚数</label><div class="stepper"><button id="takeMinus">−</button><input id="takeInput" type="number" min="1" max="${heaps[selectedHeap]}" value="${take}"><button id="takePlus">＋</button></div></div><div class="preview"><span>山 ${name(selectedHeap)}</span><code id="movePreview">${heaps[selectedHeap]} → ${heaps[selectedHeap]-take}</code></div><button id="confirmMove" class="primary">${label}<span>→</span></button></div>`;
+        target.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{selectedHeap=+b.dataset.pick;take=1;renderMoveForm(target,label)});
+        target.querySelector("#takeMinus").onclick=()=>{take=Math.max(1,take-1);renderMoveForm(target,label)};
+        target.querySelector("#takePlus").onclick=()=>{take=Math.min(heaps[selectedHeap],take+1);renderMoveForm(target,label)};
+        target.querySelector("#takeInput").onchange=e=>{take=Math.max(1,Math.min(heaps[selectedHeap],+e.target.value||1));renderMoveForm(target,label)};
+        target.querySelector("#confirmMove").onclick=()=>makeMove(selectedHeap,take);
+      }
+      function makeMove(heap,takeCount) {
+        if (heap<0||takeCount<1||takeCount>heaps[heap]) return;
+        const before=[...heaps], after=heaps.map((v,i)=>i===heap?v-takeCount:v);
+        redoHistory=[];
+        history.push({type:"move",turn:history.length+1,actor:turn,heap,take:takeCount,before,after,nimBefore:xor(before),nimAfter:xor(after),optimal:xor(after)===0});
+        heaps=after;
+        if (heaps.every(v=>v===0)) { reviewIndex=history.length-1; show("review"); renderReview(); return; }
+        turn=other(turn); selectedHeap=heaps.findIndex(v=>v>0); take=1; renderGame();
+      }
+      function skipRemaining() {
+        if (!isPairedPosition(heaps)) return;
+        const n=xor(heaps), winner=n===0?other(turn):turn;
+        redoHistory=[];
+        history.push({type:"skip",turn:history.length+1,actor:turn,before:[...heaps],after:[...heaps],nimBefore:n,nimAfter:n,winner});
+        reviewIndex=history.length-1; show("review"); renderReview();
+      }
+      function undoMove() {
+        if (!history.length) return;
+        const m=history.pop();
+        redoHistory.push(m); heaps=[...m.before]; turn=m.actor;
+        selectedHeap=heaps.findIndex(v=>v>0); take=1; reviewIndex=Math.max(0,history.length-1);
+        show("game"); renderGame();
+      }
+      function redoMove() {
+        if (!redoHistory.length) return;
+        const m=redoHistory.pop();
+        history.push(m); heaps=[...m.after]; reviewIndex=history.length-1;
+        if (m.type==="skip"||heaps.every(v=>v===0)) { show("review"); renderReview(); return; }
+        turn=other(m.actor); selectedHeap=heaps.findIndex(v=>v>0); take=1;
+        show("game"); renderGame();
+      }
+      function renderReview() {
+        const last=history.at(-1), winner=last.type==="skip"?last.winner:last.actor;
+        $("resultTitle").textContent=winner==="me"?"私の勝ち！":"相手の勝ち";
+        $("resultCopy").textContent=last.type==="skip"?`全 ${history.length-1} 手を記録。以降は最適プレイとして省略し、${who(winner)}の勝ちを確定しました。`:`全 ${history.length} 手。最後の1枚は${who(winner)}が取りました。`;
+        $("seal").textContent=winner==="me"?"WIN":"LOSE";
+        $("timeline").innerHTML=history.map((m,i)=>m.type==="skip"?`<button data-turn="${i}" class="${i===reviewIndex?"active":""}"><span>${String(i+1).padStart(2,"0")}</span><div><strong>以降を省略</strong><small>最適プレイで勝敗確定</small></div><code>XOR ${m.nimBefore}</code></button>`:`<button data-turn="${i}" class="${i===reviewIndex?"active":""}"><span>${String(i+1).padStart(2,"0")}</span><div><strong>${who(m.actor)}</strong><small>山${name(m.heap)}から ${m.take}枚</small></div><code>${m.nimBefore} → ${m.nimAfter}</code></button>`).join("");
+        document.querySelectorAll("[data-turn]").forEach(b=>b.onclick=()=>{reviewIndex=+b.dataset.turn;renderReview()});
+        const m=history[reviewIndex], table=binaryHTML(m.before,m.nimBefore);
+        if (m.type==="skip") {
+          const reason=`${who(m.actor)}が山を減らしても、${who(m.winner)}が同じ枚数だった対の山を同じだけ減らし、対称性を保てます。`;
+          $("detail").innerHTML=`<div class="kicker">TURN ${String(m.turn).padStart(2,"0")} — SKIPPED</div><h3>以下の操作を省略</h3><div class="before-after"><div><small>CURRENT</small><strong>${m.before.join(" · ")}</strong></div><i>→</i><div><small>WINNER</small><strong>${who(m.winner)}</strong></div></div><div id="reviewBinary" class="binary">${table.html}</div><div class="note good"><span>✓</span><div><strong>${who(m.winner)}の勝ちとして確定</strong><p>同じ枚数の山がそれぞれ偶数個ある対称形です。${reason}</p></div></div><div class="review-nav"><button id="prev" ${reviewIndex===0?"disabled":""}>← 前の手</button><span>${reviewIndex+1} / ${history.length}</span><button id="next" ${reviewIndex===history.length-1?"disabled":""}>次の手 →</button></div>`;
+        } else {
+          $("detail").innerHTML=`<div class="kicker">TURN ${String(m.turn).padStart(2,"0")}</div><h3>${who(m.actor)}：山${name(m.heap)}から ${m.take}枚</h3><div class="before-after"><div><small>BEFORE</small><strong>${m.before.join(" · ")}</strong></div><i>→</i><div><small>AFTER</small><strong>${m.after.join(" · ")}</strong></div></div><div id="reviewBinary" class="binary">${table.html}</div><div class="note ${m.optimal?"good":""}"><span>${m.optimal?"✓":"↗"}</span><div><strong>${m.optimal?"ニム和を0にした手":"ニム和が0以外になった手"}</strong><p>${m.optimal?"相手にバランス状態を渡した、理論上の最善手です。":`手のあとのニム和は ${m.nimAfter}。次のプレイヤーには0へ戻すチャンスがあります。`}</p></div></div><div class="review-nav"><button id="prev" ${reviewIndex===0?"disabled":""}>← 前の手</button><span>${reviewIndex+1} / ${history.length}</span><button id="next" ${reviewIndex===history.length-1?"disabled":""}>次の手 →</button></div>`;
+        }
+        $("reviewBinary").style.gridTemplateColumns=table.cols;
+        $("prev").onclick=()=>{if(reviewIndex>0){reviewIndex--;renderReview()}};
+        $("next").onclick=()=>{if(reviewIndex<history.length-1){reviewIndex++;renderReview()}};
+        updateHistoryControls();
+      }
+      $("skipRemaining").onclick=skipRemaining;
+      $("undoGame").onclick=$("undoReview").onclick=undoMove;
+      $("redoGame").onclick=$("redoReview").onclick=redoMove;
+      $("newGame").onclick=()=>{history=[];redoHistory=[];show("setup");renderSetup()};
+      renderSetup();
+    })();
+  </script>
+</body>
+</html>
