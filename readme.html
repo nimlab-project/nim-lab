@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>使い方 — NIM LAB</title>
+  <style>
+    :root{--ink:#132c29;--muted:#66736f;--paper:#f3f1e9;--card:#fffdf8;--line:#d8d8cd;--mint:#a9dbc3;--green:#176650;--coral:#ef7357;--yellow:#f0c950}
+    *{box-sizing:border-box}
+    html{background:var(--paper)}
+    body{margin:0;color:var(--ink);background:var(--paper);font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.8}
+    header{max-width:760px;margin:auto;padding:40px 5vw 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+    .mark{width:38px;height:38px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:50%;background:var(--yellow);font-weight:900}
+    header strong{letter-spacing:.13em}
+    header small{display:block;color:var(--muted);font-size:12px}
+    main{max-width:760px;margin:auto;padding:30px 5vw 60px}
+    h1{font-size:22px;margin:36px 0 10px}
+    h1:first-of-type{margin-top:0}
+    p{margin:8px 0;color:var(--ink)}
+    ol,ul{margin:8px 0;padding-left:1.4em}
+    li{margin:4px 0}
+    .card{padding:20px 22px;border:1px solid var(--line);border-radius:10px;background:var(--card);box-shadow:0 10px 30px #132c290c;margin:14px 0}
+    .card.primary{border-color:var(--green);background:#eff8f2}
+    a.button{display:inline-block;margin-top:8px;padding:11px 18px;border-radius:7px;color:#fff;background:var(--ink);text-decoration:none;font-weight:800;font-size:13px}
+    a.button:hover{background:#234640}
+    code{background:#00000010;padding:1px 6px;border-radius:4px;font-size:13px}
+    .note{color:var(--muted);font-size:13px}
+    footer{max-width:760px;margin:auto;padding:20px 5vw 40px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
+  </style>
+</head>
+<body>
+  <header>
+    <span class="mark">N</span>
+    <span><strong>NIM LAB</strong><small>使い方ガイド</small></span>
+  </header>
+  <main>
+    <div class="card primary">
+      <h1 style="margin-top:0">オンラインで遊ぶ（おすすめ）</h1>
+      <p>インストール不要・登録不要で、下のリンクからそのまま遊べます。</p>
+      <a class="button" href="https://nimlab-project.github.io/nim-lab/">NIM LAB を開く →</a>
+    </div>
+
+    <h1>使い方</h1>
+    <ol>
+      <li>上のリンク（またはローカルの <code>index.html</code>）を開きます。</li>
+      <li>山の数・各山のコイン枚数・先手/後手を設定します。</li>
+      <li>「この盤面で始める」を押すと対局がスタートします。</li>
+    </ol>
+
+    <h1>ローカルファイルで使う場合</h1>
+    <p><code>index.html</code> をダブルクリックするだけで、ブラウザーが開いてそのまま対局を始められます。インターネット接続やインストールは不要です。</p>
+
+    <h1>Googleドライブで使う場合</h1>
+    <ul>
+      <li>Google Drive for desktop の同期フォルダにこのフォルダを置けば、同期フォルダ内の <code>index.html</code> をダブルクリックして使えます。</li>
+      <li>ブラウザー版Googleドライブは、安全上の理由からHTMLアプリをその場で実行しません。ブラウザー版から使う場合は、このフォルダをダウンロードしてから <code>index.html</code> を開いてください。</li>
+    </ul>
+    <p class="note">オンライン版を使えば、この手順は不要です。</p>
+
+    <h1>内容</h1>
+    <ul>
+      <li>山の数と各山のコイン枚数を設定</li>
+      <li>先手／後手を選択</li>
+      <li>必勝手をすべて表示</li>
+      <li>二進数とニム和を確認</li>
+      <li>相手の手を手動入力</li>
+      <li>対局後に全手を振り返り</li>
+    </ul>
+  </main>
+  <footer>NIM LAB — 勝ち筋を、目で理解する。</footer>
+</body>
+</html>
